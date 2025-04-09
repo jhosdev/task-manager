@@ -1,0 +1,31 @@
+{
+  "name": "@task-manager/source",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jhosaim",
+    "email": "jhos.ricardo14@email.com"
+  },
+  "private": true,
+  "scripts": {
+    "build": "pnpm -r run build",
+    "start": "pnpm -r run start",
+    "dev": "pnpm -r --parallel run start",
+    "lint": "pnpm -r run lint",
+    "test": "pnpm -r run test"
+  },
+  "devDependencies": {
+    "@angular/cli": "^17.3.6",
+    "@typescript-eslint/parser": "^5.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "concurrently": "^7.0.0",
+    "@eslint/js": "^9.8.0",
+    "eslint": "^9.8.0",
+    "eslint-config-prettier": "^10.0.0",
+    "prettier": "^2.6.2",
+    "ts-node": "10.9.1",
+    "tslib": "^2.3.0",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.19.0"
+  }
+}
