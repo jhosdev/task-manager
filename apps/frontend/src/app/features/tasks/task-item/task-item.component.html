@@ -1,0 +1,48 @@
+<mat-card class="task-item-card" [class.completed]="task.completed" [class.editing]="isEditing()">
+  <mat-card-header>
+    <mat-card-title>
+      <mat-checkbox
+         [ngModel]="task.completed"
+         (ngModelChange)="onStatusChange($event)"
+         [disabled]="isLoading() || isEditing()"
+         color="primary"
+         class="task-checkbox">
+      </mat-checkbox>
+      <span class="task-title">{{ task.title }}</span>
+    </mat-card-title>
+     <mat-card-subtitle class="task-date">
+        Creado: {{ task.createdAt | date:'short' }} </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+      @if (!isEditing()) {
+         <p class="task-description">{{ task.description }}</p>
+      }
+
+     @if (isEditing()) {
+        <app-task-form
+            [taskToEdit]="task"
+            [isLoading]="isLoading()"
+            (saveTask)="saveEditedTask($event)"
+            (cancelEdit)="cancelEditTask()">
+        </app-task-form>
+      }
+  </mat-card-content>
+
+
+   @if (!isEditing()) {
+     <mat-card-actions align="end">
+        @if(isLoading()){
+           <mat-progress-spinner mode="indeterminate" diameter="24" class="action-spinner"></mat-progress-spinner>
+        } @else {
+            <button mat-icon-button (click)="toggleEdit()" aria-label="Editar tarea" [disabled]="isLoading()">
+               <mat-icon>edit</mat-icon>
+             </button>
+             <button mat-icon-button color="warn" (click)="confirmDelete()" aria-label="Eliminar tarea" [disabled]="isLoading()">
+               <mat-icon>delete</mat-icon>
+             </button>
+        }
+      </mat-card-actions>
+   }
+
+</mat-card>

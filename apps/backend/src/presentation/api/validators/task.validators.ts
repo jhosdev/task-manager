@@ -37,10 +37,10 @@ export const updateTaskSchema = z.object({
     description: z.string()
                    .max(DESCRIPTION_MAX_LENGTH, { message: `Description cannot exceed ${DESCRIPTION_MAX_LENGTH} characters.` })
                    .optional(),
-    isCompleted: z.boolean({ invalid_type_error: 'isCompleted must be a boolean.' })
+    completed: z.boolean({ invalid_type_error: 'completed must be a boolean.' })
                     .optional(),
   }).refine(data => Object.keys(data).length > 0, {
-      message: "At least one field (title, description, or isCompleted) must be provided for update.",
+      message: "At least one field (title, description, or completed) must be provided for update.",
       path: ["body"]
   }),
 });

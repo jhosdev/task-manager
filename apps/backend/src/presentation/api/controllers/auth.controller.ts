@@ -44,8 +44,8 @@ export class AuthController {
       const options = {
         maxAge: SESSION_COOKIE_EXPIRES_IN,
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax' as const,
+        secure: true,
+        sameSite: 'lax' as const
       };
       res.cookie('__session', sessionCookie, options);
       logger.info({ ...logContext, userId: userDto.id }, 'Session login successful.');
@@ -82,19 +82,10 @@ export class AuthController {
       const customToken = await this.firebaseAuthService.createCustomToken(userDto.id);
       logger.debug({ ...logContext, userId: userDto.id }, 'Custom token created for new user.');
 
-      const sessionCookie = await this.firebaseAuthService.createSessionCookie(customToken);
-      logger.debug({ ...logContext, userId: userDto.id }, 'Session cookie created for new user.');
-
-      const options = {
-        maxAge: SESSION_COOKIE_EXPIRES_IN,
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax' as const,
-      };
-      res.cookie('__session', sessionCookie, options);
-      logger.info({ ...logContext, userId: userDto.id }, 'Sign up and auto-login successful.');
-
-      res.status(201).json(userDto);
+      res.status(201).json({
+        customToken,
+        user: userDto,
+      });
 
     } catch (error) {
       if (error instanceof Error) {
@@ -185,7 +176,48 @@ export class AuthController {
       logger.error({ ...logContext, error }, 'Error fetching user profile by email.');
       res.status(500).json({ message: 'Error fetching user profile by email.' });
     } 
-    
   }
-  
+
+  /**
+   * Handles GET /api/auth/validate-session
+   * Validates the server session.
+   */
+  async validateSession(req: Request, res: Response, next: NextFunction): Promise<void> {
+    const logContext = { controller: 'AuthController', method: 'validateSession', ip: req.ip };
+    logger.info({ ...logContext }, 'Validating server session.');
+
+    try {
+      const sessionCookie = req.cookies.__session || '';
+      if (!sessionCookie) {
+        logger.warn({ ...logContext }, 'No session cookie found.');
+        res.status(401).json({ valid: false });
+        return;
+      }
+
+      const decodedClaims = await this.firebaseAuthService.verifySessionCookie(sessionCookie).catch(() => null);
+      if (!decodedClaims) {
+        logger.warn({ ...logContext }, 'Invalid session cookie.');
+        res.status(401).json({ valid: false });
+        return;
+      }
+
+      if (!decodedClaims.email) {
+        logger.warn({ ...logContext }, 'No email found in session cookie.');
+        res.status(401).json({ valid: false });
+        return;
+      }
+
+      const userDto = await this.getUserByEmailUseCase.execute(decodedClaims.email);
+      if (!userDto) {
+        logger.warn({ ...logContext }, 'User not found with the provided email.');
+        res.status(404).json({ valid: false });
+        return;
+      }
+
+      res.status(200).json({ valid: true, user: userDto });
+    } catch (error) {
+      logger.error({ ...logContext, error }, 'Error validating server session.');
+      res.status(500).json({ valid: false });
+    }
+  }
 }

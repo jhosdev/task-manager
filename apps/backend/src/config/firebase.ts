@@ -11,6 +11,7 @@ let isFirebaseInitialized = false;
 
 try {
   // Use require for simplicity with JSON, or fs.readFileSync + JSON.parse
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   serviceAccount = require(env.GOOGLE_APPLICATION_CREDENTIALS);
   logger.info({ path: env.GOOGLE_APPLICATION_CREDENTIALS }, 'Service account credentials loaded successfully.');
 } catch (error: any) {

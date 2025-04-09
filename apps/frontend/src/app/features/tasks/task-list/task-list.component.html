@@ -1,0 +1,63 @@
+<mat-toolbar color="primary">
+  <span>Mis Tareas</span>
+  <span class="toolbar-spacer"></span>
+  <button mat-icon-button aria-label="Agregar nueva tarea" (click)="toggleAddTaskForm()">
+    <mat-icon>add</mat-icon>
+  </button>
+  <button mat-icon-button aria-label="Cerrar sesión" (click)="logout()">
+    <mat-icon>logout</mat-icon>
+  </button>
+</mat-toolbar>
+
+<div class="task-list-container">
+
+  <!-- Add Task Form (conditionally displayed) -->
+  @if (showAddTaskForm()) {
+    <div class="add-task-section">
+       <app-task-form
+          [isLoading]="isAddingTask()"
+          (saveTask)="addTask($event)"
+          (cancelEdit)="toggleAddTaskForm()"> <!-- Use cancelEdit to hide the form -->
+       </app-task-form>
+    </div>
+  }
+
+  <!-- Loading State -->
+   @if (isLoading() && tasks().length === 0) {
+     <div class="loading-indicator">
+       <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+       <p>Cargando tareas...</p>
+     </div>
+   }
+
+   <!-- Error State -->
+   @if (error()) {
+     <div class="error-message">
+       <mat-icon color="warn">error_outline</mat-icon>
+       <p>{{ error() }}</p>
+       <button mat-stroked-button color="primary" (click)="refreshTasks()">Reintentar</button>
+     </div>
+   }
+
+   <!-- Task List -->
+   @if (!isLoading() && !error()) {
+      @if (tasks().length > 0) {
+        <div class="tasks">
+           @for (task of tasks(); track task.id) {
+             <app-task-item
+               [task]="task"
+               (taskUpdated)="refreshTasks()"
+               (taskDeleted)="refreshTasks()">
+             </app-task-item>
+           }
+        </div>
+      } @else {
+         <div class="empty-state">
+            <mat-icon>check_circle_outline</mat-icon>
+            <p>¡Todo listo! No tienes tareas pendientes.</p>
+            <p>Puedes agregar una nueva tarea usando el botón <mat-icon class="inline-icon">add</mat-icon> de arriba.</p>
+         </div>
+      }
+   }
+
+</div>

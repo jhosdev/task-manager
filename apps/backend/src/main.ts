@@ -10,13 +10,11 @@ import logger, { initializeLogger, loggerInstance } from './shared/logger';
 import { authRoutes, taskRoutes } from './presentation/api/routes';
 import { initializeFirebaseAdmin } from './config/firebase';
 
-async function bootstrap() {
+export function createExpressApp(): express.Express {
   initializeLogger();
   console.log('Initializing Firebase Admin SDK');
-  initializeFirebaseAdmin();
+  initializeFirebaseAdmin(); // Ensure Firebase Admin is initialized
   const app = express();
-  const port = env.PORT;
-
 
   app.use(helmet());
 
@@ -53,14 +51,20 @@ async function bootstrap() {
     }, 'Unhandled error occurred.');
 
     const statusCode = typeof err.statusCode === 'number' ? err.statusCode : 500;
-    // Use validated NODE_ENV
     const message = env.NODE_ENV === 'production' && statusCode === 500
       ? 'Internal Server Error'
-      : err.message || 'An unexpected error occurred'; // Provide a default message
+      : err.message || 'An unexpected error occurred';
 
-    // Avoid sending stack trace in production response
     res.status(statusCode).json({ message });
   });
+
+  return app;
+}
+
+// Bootstrap function for standalone execution (e.g., local development)
+async function bootstrap() {
+  const app = createExpressApp(); // Create the app using the exported function
+  const port = env.PORT;
 
   // --- Start Server ---
   const server = app.listen(port, () => {
@@ -78,11 +82,12 @@ async function bootstrap() {
       });
     });
   });
-
 }
 
-bootstrap().catch(err => {
-  logger.fatal({ error: err.message, stack: err.stack }, 'Failed to bootstrap application');
-  console.error('Failed to bootstrap application:', err);
-  process.exit(1);
-});
+if (process.env.RUN_STANDALONE === 'true') {
+  bootstrap().catch(err => {
+    const log = loggerInstance || console;
+    log.error({ error: err.message, stack: err.stack }, 'Failed to bootstrap application');
+    process.exit(1);
+  });
+}

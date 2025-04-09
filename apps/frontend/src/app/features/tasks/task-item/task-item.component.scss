@@ -1,0 +1,65 @@
+.task-item-card {
+  margin-bottom: 15px;
+  transition: background-color 0.3s ease; // Smooth transition for completed state
+
+  &.completed {
+    background-color: #f0f0f0; // Lighter background for completed tasks
+
+    .task-title, .task-description {
+      text-decoration: line-through;
+      color: #757575; // Grey out text
+    }
+  }
+
+  &.editing {
+     // Add specific styles when editing if needed, e.g., border
+     border-left: 4px solid var(--mat-primary-500, #3f51b5); // Example primary color accent
+  }
+}
+
+mat-card-header {
+  padding-bottom: 8px; // Reduce space below header slightly
+}
+
+.task-checkbox {
+  margin-right: 10px;
+   // Align checkbox better with title
+   vertical-align: middle;
+}
+
+.task-title {
+   // Align title better with checkbox
+   vertical-align: middle;
+}
+
+
+.task-date {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 4px; // Add some space above date
+    display: block; // Ensure it takes its own line if needed
+}
+
+.task-description {
+   margin-top: 8px;
+   white-space: pre-wrap; // Preserve line breaks in description
+}
+
+
+mat-card-actions {
+  padding: 8px 16px !important; // Override default padding if needed
+
+   .action-spinner {
+       margin: 0 8px; // Space around spinner in actions
+   }
+}
+
+// Responsive adjustments if necessary
+@media (max-width: 600px) {
+    mat-card-title {
+       font-size: 1em; // Slightly smaller title on small screens
+    }
+     .task-checkbox {
+         margin-right: 5px;
+     }
+}

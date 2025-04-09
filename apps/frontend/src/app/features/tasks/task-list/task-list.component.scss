@@ -1,0 +1,70 @@
+.toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+.task-list-container {
+  padding: 20px;
+  max-width: 800px; // Limit width for better readability
+  margin: 0 auto; // Center the container
+}
+
+.add-task-section {
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.loading-indicator,
+.error-message,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: #666;
+  margin-top: 30px;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 15px;
+  }
+
+  p {
+    margin-top: 10px;
+    font-size: 1.1em;
+  }
+}
+
+.error-message {
+  color: var(--mat-warn-700, #f44336); // Use Angular Material warn color
+
+  button {
+    margin-top: 20px;
+  }
+}
+
+.empty-state {
+   mat-icon {
+      color: #4caf50; // Green check
+   }
+   .inline-icon {
+      font-size: inherit; // Match surrounding text size
+      width: auto;
+      height: auto;
+      vertical-align: text-bottom; // Align icon nicely with text
+   }
+}
+
+
+.tasks {
+  margin-top: 20px;
+}
+
+// Add some spacing between task items if needed (TaskItemComponent already has margin-bottom)
+// .tasks app-task-item:not(:last-child) {
+//   margin-bottom: 15px;
+// }

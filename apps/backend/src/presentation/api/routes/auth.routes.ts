@@ -45,11 +45,17 @@ router.get(
 );
 
 
-// Protected route example
+// Protected routes
 router.get(
   '/me',
   AuthMiddleware, // Apply authentication middleware
   (req, res, next) => authController.getMyProfile(req, res, next)
+);
+
+router.get(
+  '/validate-session',
+  AuthMiddleware,
+  (req, res, next) => authController.validateSession(req, res, next)
 );
 
 

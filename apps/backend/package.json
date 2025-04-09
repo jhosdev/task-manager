@@ -2,20 +2,33 @@
   "name": "backend",
   "version": "0.0.1",
   "private": true,
+  "main": "index.js",
   "scripts": {
-    "start": "node dist/main.js",
+    "start:standalone": "node dist/main.js",
     "dev": "nodemon --exec ts-node src/main.ts",
-    "build": "tsc",
+    "build": "tsc -b && cp package.json dist/package.json && cp .env dist/.env && cp -r credentials dist/credentials",
     "format:check": "prettier . --check --ignore-path=../../.prettierignore",
-    "format:write": "prettier . --write --ignore-path=../../.prettierignore"
+    "format:write": "prettier . --write --ignore-path=../../.prettierignore",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
   },
   "dependencies": {
+    "firebase-admin": "^12.6.0",
+    "firebase-functions": "^6.0.1",
     "axios": "^1.6.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "firebase-admin": "^13.2.0",
     "helmet": "^8.1.0",
     "pino": "^9.6.0",
     "pino-http": "^10.4.0",
@@ -28,6 +41,8 @@
     "@types/node": "~18.16.9",
     "nodemon": "^3.1.9",
     "pino-pretty": "^13.0.0",
-    "ts-node": "10.9.1"
+    "ts-node": "10.9.1",
+    "firebase-functions-test": "^3.1.0",
+    "typescript": "^4.9.0"
   }
 }
