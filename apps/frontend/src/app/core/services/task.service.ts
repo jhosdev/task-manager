@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { Observable, throwError, BehaviorSubject } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
@@ -68,12 +68,11 @@ export class TaskService {
         catchError(this.handleError<{ message: string }>('Error al eliminar tarea'))
       );
   }
-
-  // Centralized error handler (similar to AuthService)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: HttpErrorResponse): Observable<T> => {
       console.error(`${operation} failed:`, error);
-      let userMessage = `Error en ${operation}. ${error.error?.message || error.message}`;
+      const userMessage = `Error en ${operation}. ${error.error?.message || error.message}`;
       this.notificationService.showError(userMessage);
       return throwError(() => new Error(userMessage));
     };

@@ -24,24 +24,24 @@ const router: Router = Router();
 router.post(
   '/session-login',
   validateRequest(sessionLoginSchema),
-  (req, res, next) => authController.sessionLogin(req, res, next)
+  (req, res) => authController.sessionLogin(req, res)
 );
 
 router.post(
   '/session-logout',
-  (req, res, next) => authController.sessionLogout(req, res, next)
+  (req, res) => authController.sessionLogout(req, res)
 );
 
 router.post(
   '/sign-up',
   validateRequest(signUpSchema),
-  (req, res, next) => authController.signUp(req, res, next)
+  (req, res) => authController.signUp(req, res)
 );
 
 // Custom endpoint to get user by email
 router.get(
   '/user-by-email/:email',
-  (req, res, next) => authController.getUserByEmail(req, res, next)
+  (req, res) => authController.getUserByEmail(req, res)
 );
 
 
@@ -49,13 +49,13 @@ router.get(
 router.get(
   '/me',
   AuthMiddleware, // Apply authentication middleware
-  (req, res, next) => authController.getMyProfile(req, res, next)
+  (req, res) => authController.getMyProfile(req, res)
 );
 
 router.get(
   '/validate-session',
   AuthMiddleware,
-  (req, res, next) => authController.validateSession(req, res, next)
+  (req, res) => authController.validateSession(req, res)
 );
 
 

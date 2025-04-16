@@ -14,6 +14,7 @@ try {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   serviceAccount = require(env.GOOGLE_APPLICATION_CREDENTIALS);
   logger.info({ path: env.GOOGLE_APPLICATION_CREDENTIALS }, 'Service account credentials loaded successfully.');
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 } catch (error: any) {
   logger.fatal({ path: env.GOOGLE_APPLICATION_CREDENTIALS, error: error.message }, 'Failed to load Google Application Credentials JSON file.');
   throw new Error(`Could not load service account credentials from path: ${env.GOOGLE_APPLICATION_CREDENTIALS}. Error: ${error.message}`);
@@ -30,6 +31,7 @@ export function initializeFirebaseAdmin() {
       });
       isFirebaseInitialized = true;
       logger.info('Firebase Admin SDK initialized successfully.');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       logger.fatal({ error: error.message, stack: error.stack }, 'Firebase Admin SDK initialization failed.');
       throw new Error(`Firebase Admin SDK initialization failed: ${error.message}`);

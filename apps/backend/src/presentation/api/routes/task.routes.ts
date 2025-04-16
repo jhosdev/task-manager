@@ -33,27 +33,27 @@ router.use(AuthMiddleware);
 router.post(
   '/',
   validateRequest(createTaskSchema),
-  (req, res, next) => taskController.createTask(req, res, next)
+  (req, res) => taskController.createTask(req, res)
 );
 
 // GET /api/tasks - Get all tasks for the logged-in user
 router.get(
   '/',
-  (req, res, next) => taskController.getUserTasks(req, res, next)
+  (req, res) => taskController.getUserTasks(req, res)
 );
 
 // PUT /api/tasks/:taskId - Update a specific task
 router.put(
   '/:taskId',
   validateRequest(updateTaskSchema), // Validates both params.taskId and body
-  (req, res, next) => taskController.updateTask(req, res, next)
+  (req, res) => taskController.updateTask(req, res)
 );
 
 // DELETE /api/tasks/:taskId - Delete a specific task
 router.delete(
   '/:taskId',
    validateRequest(taskIdParamSchema), // Validates params.taskId
-  (req, res, next) => taskController.deleteTask(req, res, next)
+  (req, res) => taskController.deleteTask(req, res)
 );
 
 export default router;

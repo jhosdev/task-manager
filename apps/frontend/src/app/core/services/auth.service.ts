@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Auth, onAuthStateChanged, signInWithCustomToken, signInWithEmailAndPassword, signOut, User } from '@angular/fire/auth';
 import { from, Observable, of, throwError } from 'rxjs';
-import { switchMap, tap, map, catchError, finalize, shareReplay, take } from 'rxjs/operators';
+import { switchMap, tap, map, catchError, finalize } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { NotificationService } from './notification.service';
 
@@ -56,8 +56,8 @@ export class AuthService {
      }, { allowSignalWrites: true });
   }
 
-  getUserByEmail(email: string): Observable<any | null> {
-    return this.http.get<any>(`${this.apiUrl}/user-by-email/${encodeURIComponent(email)}`).pipe(
+  getUserByEmail(email: string): Observable<User | null> {
+    return this.http.get<User>(`${this.apiUrl}/user-by-email/${encodeURIComponent(email)}`).pipe(
       catchError(err => {
         if (err.status === 404) {
           return of(null);
@@ -94,14 +94,22 @@ export class AuthService {
   signUp(email: string): Observable<void> {
     this.isLoading.set(true);
     return this.http.post<{ customToken: string }>(`${this.apiUrl}/sign-up`, { email }).pipe(
+      tap(res => console.log('signUp: Received response from /sign-up endpoint.', res)),
       switchMap(res => {
         if (!res?.customToken) {
+          console.error('signUp Error: No custom token received from backend.');
           return throwError(() => new Error('No custom token received from backend.'));
         }
         return from(signInWithCustomToken(this.afAuth, res.customToken));
       }),
+      switchMap(userCredential => {
+        return from(userCredential.user.getIdToken()); // Returns idToken (string)
+      }),
+      switchMap(idToken => {
+        return this.http.post(`${this.apiUrl}/session-login`, { idToken });
+      }),
       tap(() => {
-        this.notificationService.showSuccess('Usuario creado exitosamente.');
+        this.notificationService.showSuccess('Usuario creado e inicio de sesión exitoso.');
         this.router.navigate(['/tasks']);
       }),
       map(() => void 0),

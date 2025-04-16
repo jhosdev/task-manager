@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { catchError, filter, map, skip, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, filter, map, take } from 'rxjs/operators';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
 
@@ -27,14 +27,13 @@ export const authGuard: CanActivateFn = (route, state) => {
       }
     }),
     catchError((err) => {
-      // Handle potential errors during the guard execution
       console.error("AuthGuard Error:", err, "Redirecting to login.");
-      // Return UrlTree for clean redirection
       return of(router.parseUrl('/login'));
     })
   );
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const loginGuard: CanActivateFn = (route, state) => {
     const authService = inject(AuthService);
     const router      = inject(Router);
@@ -48,12 +47,11 @@ export const loginGuard: CanActivateFn = (route, state) => {
         const user = authService.currentUser();
         if (user) {
           console.log('LoginGuard: User already logged in, redirecting to tasks.');
-          return router.parseUrl('/tasks'); // Redirect to default logged-in area
+          return router.parseUrl('/tasks');
         }
         return true;
       }),
       catchError(() => {
-        // If there's an error, it's safest to allow access to the login page
         console.error("LoginGuard Error: Allowing access to login page.");
         return of(true);
       })

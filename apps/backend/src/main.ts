@@ -39,7 +39,8 @@ export function createExpressApp(): express.Express {
   });
 
   // --- Global Error Handler ---
-  app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  app.use((err: any, req: express.Request, res: express.Response) => {
     // Log the error with context
     logger.error({
         error: err.message,

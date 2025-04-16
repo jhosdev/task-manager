@@ -1,4 +1,4 @@
-import { Response, NextFunction } from 'express';
+import { Response } from 'express';
 import logger from '../../../shared/logger';
 // Import Use Cases
 import { AddTaskUseCase } from '../../../core/application/task/use-cases/add-task.usecase';
@@ -28,11 +28,11 @@ export class TaskController {
       return req.user.uid;
   }
 
-  /**
+  /** 
    * Handles POST /api/tasks
    * Creates a new task for the authenticated user.
    */
-  async createTask(req: RequestWithUser, res: Response, next: NextFunction): Promise<void> {
+  async createTask(req: RequestWithUser, res: Response): Promise<void> {
     const logContext = { controller: 'TaskController', method: 'createTask', ip: req.ip };
     try {
       const userId = this.getUserId(req);
@@ -59,7 +59,7 @@ export class TaskController {
    * Handles GET /api/tasks
    * Retrieves all tasks for the authenticated user.
    */
-  async getUserTasks(req: RequestWithUser, res: Response, next: NextFunction): Promise<void> {
+  async getUserTasks(req: RequestWithUser, res: Response): Promise<void> {
     const logContext = { controller: 'TaskController', method: 'getUserTasks', ip: req.ip };
      try {
         const userId = this.getUserId(req);
@@ -85,7 +85,7 @@ export class TaskController {
    * Handles PUT /api/tasks/:taskId
    * Updates a specific task for the authenticated user.
    */
-  async updateTask(req: RequestWithUser, res: Response, next: NextFunction): Promise<void> {
+  async updateTask(req: RequestWithUser, res: Response): Promise<void> {
      const { taskId } = req.params; // Assumes validateRequest middleware ran
      const logContext = { controller: 'TaskController', method: 'updateTask', taskId, ip: req.ip };
      try {
@@ -113,7 +113,7 @@ export class TaskController {
    * Handles DELETE /api/tasks/:taskId
    * Deletes a specific task for the authenticated user.
    */
-  async deleteTask(req: RequestWithUser, res: Response, next: NextFunction): Promise<void> {
+  async deleteTask(req: RequestWithUser, res: Response): Promise<void> {
     const { taskId } = req.params; // Assumes validateRequest middleware ran
     const logContext = { controller: 'TaskController', method: 'deleteTask', taskId, ip: req.ip };
     try {

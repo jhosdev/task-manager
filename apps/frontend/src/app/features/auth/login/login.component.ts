@@ -37,12 +37,12 @@ export class LoginComponent implements OnInit {
   private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
   private dialog = inject(MatDialog);
-  private router = inject(Router); // Inject Router
+  private router = inject(Router);
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]]
   });
-  isLoading = signal(false); // Signal for loading state
+  isLoading = signal(false);
 
   ngOnInit(): void {}
 
@@ -62,23 +62,18 @@ export class LoginComponent implements OnInit {
     this.authService.getUserByEmail(email).subscribe({
       next: (user) => {
         if (user) {
-          // User exists, attempt session login
           this.authService.sessionLogin(email).subscribe({
-            // Navigation is handled within sessionLogin on success
-            error: () => this.isLoading.set(false), // Reset loading on login error
-            complete: () => this.isLoading.set(false) // Reset on completion if needed, navigation handles it
+            error: () => this.isLoading.set(false),
+            complete: () => this.isLoading.set(false)
           });
         } else {
-          // User does not exist, ask for confirmation to create
-          this.isLoading.set(false); // Stop loading before showing dialog
+          this.isLoading.set(false);
           this.openSignUpConfirmation(email);
         }
       },
       error: (err) => {
-         // Error handled by service, just stop loading indicator
         this.isLoading.set(false);
         console.error("getUserByEmail check failed:", err);
-        // Notification already shown by service
       }
     });
   }
@@ -93,12 +88,11 @@ export class LoginComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) { // User confirmed creation
+      if (result) {
         this.isLoading.set(true);
         this.authService.signUp(email).subscribe({
-           // Navigation is handled within signUp -> signInFirebaseWithCustomToken
-           error: () => this.isLoading.set(false), // Stop loading on sign-up error
-           // complete: () => this.isLoading.set(false) // Reset on completion if needed
+           error: () => this.isLoading.set(false),
+           complete: () => this.isLoading.set(false)
         });
       } else {
           console.log('User cancelled sign up.');

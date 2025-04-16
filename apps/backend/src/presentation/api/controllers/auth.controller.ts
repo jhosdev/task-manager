@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { LoginUserUseCase } from '../../../core/application/user/use-cases/login-user.usecase'; // Added
 import { CreateUserUseCase } from '../../../core/application/user/use-cases/create-user.usecase'; // Added
 import { FirebaseAuthService } from '../../../infrastructure/auth/firebase-auth.service';
@@ -22,7 +22,7 @@ export class AuthController {
    * Handles POST /api/auth/session-login
    * Verifies ID token, ensures user exists, creates session cookie.
    */
-  async sessionLogin(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async sessionLogin(req: Request, res: Response): Promise<void> {
     const { idToken } = req.body; // Assumes validateRequest middleware ran
     const logContext = { controller: 'AuthController', method: 'sessionLogin', ip: req.ip };
     logger.info({ ...logContext }, 'Processing session login request.');
@@ -45,7 +45,8 @@ export class AuthController {
         maxAge: SESSION_COOKIE_EXPIRES_IN,
         httpOnly: true,
         secure: true,
-        sameSite: 'lax' as const
+        // sameSite: 'lax' as const // this will work then the frontend is running on the same domain as the backend
+        sameSite: 'none' as const
       };
       res.cookie('__session', sessionCookie, options);
       logger.info({ ...logContext, userId: userDto.id }, 'Session login successful.');
@@ -68,7 +69,7 @@ export class AuthController {
    * Handles POST /api/auth/sign-up
    * Verifies ID token, creates a new user, creates session cookie (auto-login).
    */
-  async signUp(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async signUp(req: Request, res: Response): Promise<void> {
     const { email } = req.body; // Assumes validateRequest middleware ran
     const logContext = { controller: 'AuthController', method: 'signUp', ip: req.ip };
     logger.info({ ...logContext }, 'Processing sign up request.');
@@ -104,7 +105,7 @@ export class AuthController {
    * Handles POST /api/auth/session-logout
    * Clears the session cookie and revokes the session server-side.
    */
-  async sessionLogout(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async sessionLogout(req: Request, res: Response): Promise<void> {
     const sessionCookie = req.cookies.__session || '';
     const logContext = { controller: 'AuthController', method: 'sessionLogout', ip: req.ip };
     logger.info({ ...logContext }, 'Processing session logout request.');
@@ -138,7 +139,7 @@ export class AuthController {
    * Handles GET /api/auth/me
    * Returns the currently authenticated user's profile.
    */
-  async getMyProfile(req: RequestWithUser, res: Response, next: NextFunction): Promise<void> {
+  async getMyProfile(req: RequestWithUser, res: Response): Promise<void> {
     // AuthMiddleware should have run and attached req.user
     const logContext = { controller: 'AuthController', method: 'getMyProfile', userId: req.user?.uid, ip: req.ip };
      if (!req.user) {
@@ -157,7 +158,7 @@ export class AuthController {
    * Handles GET /api/auth/user-by-email
    * Returns the user profile for a given email.
    */
-  async getUserByEmail(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getUserByEmail(req: Request, res: Response): Promise<void> {
     const { email } = req.params;
     const logContext = { controller: 'AuthController', method: 'getUserByEmail', email, ip: req.ip };
     logger.info({ ...logContext }, 'Fetching user profile by email.');
@@ -182,7 +183,7 @@ export class AuthController {
    * Handles GET /api/auth/validate-session
    * Validates the server session.
    */
-  async validateSession(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async validateSession(req: Request, res: Response): Promise<void> {
     const logContext = { controller: 'AuthController', method: 'validateSession', ip: req.ip };
     logger.info({ ...logContext }, 'Validating server session.');
 
